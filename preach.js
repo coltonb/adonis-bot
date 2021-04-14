@@ -35,17 +35,19 @@ class Preach {
     return prompt.pop();
   }
 
-  async generateMessage(prompt = []) {
+  async generateMessage(prompt = "") {
     logger.info(`Building message from prompt: ${prompt}`);
 
-    if (prompt.length === 0) prompt = [await this.chooseStartingWord()];
+    const messageList = prompt.length == 0 ? [] : prompt.split(" ");
+    if (messageList.length === 0) {
+      messageList.push(await this.chooseStartingWord());
+    }
+    let nextWord = this._getStartingWordFromPrompt(messageList);
 
-    const messageList = _.clone(prompt);
-    let nextWord = this._getStartingWordFromPrompt(prompt);
-
-    while (messageList.length < 30 && nextWord !== null) {
-      nextWord = await this.chooseNextWord(nextWord);
+    for (let i = 0; i < 30; i++) {
       messageList.push(nextWord);
+      nextWord = await this.chooseNextWord(nextWord);
+      if (nextWord == null) break;
     }
 
     const message = messageList.join(" ");
@@ -58,7 +60,9 @@ class Preach {
   ingestMessage(message) {
     logger.info(`Ingesting message: ${message}`);
 
-    const words = message.content.split(" ");
+    const words = message.content
+      .split(/\s/)
+      .filter((word) => word.length !== 0);
     for (let i = 0; i < words.length - 1; i += 1) {
       this.redis.sadd("preach:dictionary", words[i]);
       this.redis.lpush(`preach:words:${words[i]}`, words[i + 1]);
