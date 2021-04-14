@@ -7,14 +7,14 @@ class Preach {
   }
 
   async chooseStartingWord() {
-    logger.info(`Retrieving start word from Redis ...`);
-    const startingWord = await this.redis.srandmember("preach:starting-words");
-    logger.info(`Retrieved starting word from Redis: ${startingWord}`);
+    logger.debug(`Retrieving start word from Redis ...`);
+    const startingWord = await this.redis.srandmember("preach:dictionary");
+    logger.debug(`Retrieved starting word from Redis: ${startingWord}`);
     return startingWord;
   }
 
   async chooseNextWord(currentWord) {
-    logger.info(`Retrieving next word from Redis for ${currentWord} ...`);
+    logger.debug(`Retrieving next word from Redis for ${currentWord} ...`);
 
     let key = `preach:words:${currentWord}`;
     const nextWordLength = await this.redis.llen(key);
@@ -24,7 +24,7 @@ class Preach {
     const nextWordIndex = _.random(0, nextWordLength - 1);
     const nextWord = await this.redis.lindex(key, nextWordIndex);
 
-    logger.info(
+    logger.debug(
       `Retrieved next word ${nextWord} from Redis for ${currentWord}`
     );
 
@@ -60,7 +60,7 @@ class Preach {
 
     const words = message.content.split(" ");
     for (let i = 0; i < words.length - 1; i += 1) {
-      if (i == 0) this.redis.sadd("preach:starting-words", words[i]);
+      this.redis.sadd("preach:dictionary", words[i]);
       this.redis.lpush(`preach:words:${words[i]}`, words[i + 1]);
     }
   }
