@@ -11,14 +11,13 @@ async function batchRenameKeys() {
   const keys = await redisClient.keys("text-predictor:*");
   const multi = await redisClient.multi();
 
-  const promises = [];
-
   for (key of keys) {
     const newKey = "text-predictor::" + key.slice(15);
+    multi.rename(key, newKey);
     console.log(`${key} => ${newKey}`);
   }
 
-  await Promise.all(promises);
+  await multi.exec();
   console.log(`Renamed ${keys.length} keys.`);
 }
 
