@@ -31,10 +31,6 @@ class Preach {
     return nextWord;
   }
 
-  _getStartingWordFromPrompt(prompt) {
-    return prompt.pop();
-  }
-
   async generateMessage(prompt = "") {
     logger.info(`Building message from prompt: ${prompt}`);
 
@@ -42,7 +38,7 @@ class Preach {
     if (messageList.length === 0) {
       messageList.push(await this.chooseStartingWord());
     }
-    let nextWord = this._getStartingWordFromPrompt(messageList);
+    let nextWord = _.last(messageList);
 
     for (let i = 0; messageList.length < 30; i++) {
       if (i > 0) messageList.push(nextWord);
@@ -51,9 +47,7 @@ class Preach {
     }
 
     const message = messageList.join(" ");
-
     logger.info(`Built message: ${message}`);
-
     return message;
   }
 
