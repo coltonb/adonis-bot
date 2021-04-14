@@ -10,7 +10,7 @@ const bot = new Discord.Client();
 preacher = new Preach(redisClient);
 
 function messageIsHumanCommand(message) {
-  return message.content[0] == "/" && message.author.bot;
+  return message.content[0] == "/" && !message.author.bot;
 }
 
 bot.on("ready", function () {

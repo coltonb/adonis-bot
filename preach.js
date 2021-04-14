@@ -44,8 +44,8 @@ class Preach {
     }
     let nextWord = this._getStartingWordFromPrompt(messageList);
 
-    for (let i = 0; i < 30; i++) {
-      messageList.push(nextWord);
+    for (let i = 0; messageList.length < 30; i++) {
+      if (i > 0) messageList.push(nextWord);
       nextWord = await this.chooseNextWord(nextWord);
       if (nextWord == null) break;
     }
