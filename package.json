@@ -4,13 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node lib/index.js",
+    "start": "node lib/bot.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "async-redis": "^1.1.7",
+    "discord-akairo": "^8.1.0",
     "discord.js": "^12.5.3",
     "dotenv": "^8.2.0",
     "lodash": "^4.17.21",
